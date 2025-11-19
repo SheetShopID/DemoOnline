@@ -564,14 +564,16 @@ async function checkout() {
     profileWA: profile.wa
   };
 
-  // ⚙️ Ganti dengan URL Web App milikmu
+  // ⚙️ URL Web App Google Apps Script
   const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbxD-y9sOmcsCO8ctRJB4x2X4WPSrTF5ibNfmHKGg1k9zNdwvV22YBuSmfxrV2CQW_J1Dw/exec";
 
-  const res = await fetch(ORDER_API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(orderData)
-  });
+  try {
+    const res = await fetch(ORDER_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orderData)
+    });
+
     const text = await res.text();
     console.log("Response Google Sheet:", text);
 
@@ -584,7 +586,7 @@ async function checkout() {
     renderCart();
     document.getElementById('cartdrawer').classList.remove('active');
 
-    // ✅ Notifikasi sukses halus (toast sederhana)
+    // ✅ Notifikasi sukses
     const toast = document.createElement("div");
     toast.textContent = "✅ Pesanan berhasil dikirim dan disimpan!";
     toast.style.position = "fixed";
@@ -602,14 +604,9 @@ async function checkout() {
 
   } catch (err) {
     console.error("❌ Gagal kirim ke Google Sheet:", err);
-
-    alert("⚠️ Pesanan berhasil dikirim ke WhatsApp,\n" +
-          "namun gagal disimpan ke Google Sheet.\n" +
-          "Periksa izin Web App kamu atau koneksi internet.");
+    alert("⚠️ Pesanan berhasil dikirim ke WhatsApp,\nnamun gagal disimpan ke Google Sheet.\nPeriksa izin Web App kamu atau koneksi internet.");
   }
 }
-
-
 
 /******************************
  * INIT ON LOAD
