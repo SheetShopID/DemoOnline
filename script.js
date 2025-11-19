@@ -528,7 +528,7 @@ function minimizeCart() {
 /******************************
  * CHECKOUT FUNCTION
  ******************************/
-async function checkout() {
+/* async function checkout() {
   const orderData = {
     items: [
       { name: "Scarlett Whitening", qty: 1, price: 65000 },
@@ -538,11 +538,7 @@ async function checkout() {
     profileName: "Demo Toko",
     profileWA: "6289668081647"
   };
-
-  // Ganti dengan URL Web App milikmu
   const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbzqs8y4b5AE3DVfMMMCO7MnOLh0xf543D7KKNQuEjjerVTBErk8E1k1VlfS62EBTaue/exec";
-
-  // Encode data jadi URL parameter
   const url = ORDER_API_URL + "?data=" + encodeURIComponent(JSON.stringify(orderData));
 
   try {
@@ -558,6 +554,92 @@ async function checkout() {
   } catch (err) {
     console.error("❌ Fetch error:", err);
     alert("❌ Gagal mengirim data ke Google Apps Script.");
+  }
+}
+*/
+/******************************
+ * CHECKOUT FUNCTION — Terhubung ke Google Sheet
+ ******************************/
+async function checkout() {
+  const items = Object.values(cart);
+  if (items.length === 0) {
+    alert('Keranjang kosong!');
+    return;
+  }
+
+  const profile = getCurrentProfile();
+  const waNumber = profile ? profile.wa : '';
+  if (!waNumber) {
+    alert('Nomor WhatsApp belum diatur di profil.');
+    return;
+  }
+
+  // Hitung total
+  const total = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+  // Siapkan pesan WhatsApp
+  const msgLines = items.map(i => `- ${i.name} (${i.qty}x ${formatRp(i.price)})`);
+  const msg = [
+    "Halo, saya mau titip:",
+    ...msgLines,
+    "",
+    `Total: ${formatRp(total)}`,
+    "",
+    "_Silakan konfirmasi pembayaran setelah pesan dikirim._"
+  ].join("\n");
+
+  // Buka WhatsApp
+  window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+
+  // === Siapkan data untuk Google Sheet ===
+  const orderData = {
+    items,
+    total,
+    profileName: profile.name,
+    profileWA: profile.wa
+  };
+
+  // Ganti dengan URL Web App kamu
+  const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbzqs8y4b5AE3DVfMMMCO7MnOLh0xf543D7KKNQuEjjerVTBErk8E1k1VlfS62EBTaue/exec";
+
+  // Encode ke URL parameter (GET)
+  const url = ORDER_API_URL + "?data=" + encodeURIComponent(JSON.stringify(orderData));
+
+  try {
+    const res = await fetch(url);
+    const json = await res.json();
+    console.log("Response:", json);
+
+    if (json.status === "OK") {
+      // Bersihkan cart setelah sukses
+      cart = {};
+      localStorage.removeItem("jastip_cart");
+      updateCartCount();
+      renderCart();
+      document.getElementById('cartdrawer').classList.remove('active');
+
+      // Notifikasi sukses
+      const toast = document.createElement("div");
+      toast.textContent = "✅ Pesanan berhasil dikirim & disimpan!";
+      toast.style.position = "fixed";
+      toast.style.bottom = "80px";
+      toast.style.right = "20px";
+      toast.style.background = "var(--accent)";
+      toast.style.color = "#fff";
+      toast.style.padding = "10px 16px";
+      toast.style.borderRadius = "8px";
+      toast.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+      toast.style.fontSize = "14px";
+      toast.style.zIndex = "9999";
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    } else {
+      alert("⚠️ Gagal menyimpan pesanan: " + json.message);
+    }
+
+  } catch (err) {
+    console.error("❌ Fetch error:", err);
+    alert("❌ Pesanan terkirim ke WhatsApp, tapi gagal disimpan ke Google Sheet.");
   }
 }
 
