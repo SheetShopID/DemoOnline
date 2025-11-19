@@ -539,14 +539,14 @@ function checkout() {
     return;
   }
 
-  const total = items.reduce((a,b)=>a+b.price*b.qty,0);
+  const total = items.reduce((a, b) => a + b.price * b.qty, 0);
   const msgLines = items.map(i => `- ${i.name} (${i.qty}x ${formatRp(i.price)})`);
   let msg = "Halo, saya mau titip:\n" + msgLines.join('\n') + `\n\nTotal: ${formatRp(total)}`;
 
-  // ✅ Kirim ke WhatsApp
+  // Buka WhatsApp seperti biasa
   window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
 
-  // ✅ Simpan ke Google Sheet Order (via Web App)
+  // Kirim data ke Google Sheet Order + Update Stok
   const orderData = {
     items,
     total,
@@ -554,16 +554,18 @@ function checkout() {
     profileWA: profile.wa
   };
 
-  // Ganti URL ini dengan Web App kamu
-  const ORDER_SHEET_URL = "https://script.google.com/macros/s/AKfycbxD-y9sOmcsCO8ctRJB4x2X4WPSrTF5ibNfmHKGg1k9zNdwvV22YBuSmfxrV2CQW_J1Dw/exec";
+  const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbxD-y9sOmcsCO8ctRJB4x2X4WPSrTF5ibNfmHKGg1k9zNdwvV22YBuSmfxrV2CQW_J1Dw/exec"; // ganti dgn URL Web App kamu
 
-  fetch(ORDER_SHEET_URL, {
+  fetch(ORDER_API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(orderData)
-  }).then(res => console.log("Order recorded:", res.status))
-    .catch(err => console.error("Error saving order:", err));
+  })
+  .then(res => res.text())
+  .then(txt => console.log("Google Sheet Response:", txt))
+  .catch(err => console.error("Gagal kirim ke Google Sheet:", err));
 }
+
 
 /******************************
  * INIT ON LOAD
