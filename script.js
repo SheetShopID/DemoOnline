@@ -540,7 +540,7 @@ async function checkout() {
   };
 
   // Ganti dengan URL Web App milikmu
-  const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbziolCAQ5VTppxXtzRA5BpuGg4v3QfVUC5pdIIO9gju6Pv1_0Sm1tKY0Ac8hiwOsnHJWA/exec";
+  const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbzqs8y4b5AE3DVfMMMCO7MnOLh0xf543D7KKNQuEjjerVTBErk8E1k1VlfS62EBTaue/exec";
 
   // Encode data jadi URL parameter
   const url = ORDER_API_URL + "?data=" + encodeURIComponent(JSON.stringify(orderData));
