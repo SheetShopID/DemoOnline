@@ -565,7 +565,7 @@ async function checkout() {
   };
 
   // ⚙️ URL Web App Google Apps Script
-  const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbwiXvJFoh5mYovcR4qj4SGkv8zKvA8W31ztad0s8O2NLNOd9HDJAC_OG7wPtcUDbHxlXQ/exec";
+  const ORDER_API_URL = "https://script.google.com/macros/library/d/13WAtkdCLHNqN6B1C9DqFYIk4Yi4zTTo2H0fl6Y7AP9RsGM9U6PKiZWHL/6";
   
 
   try {
