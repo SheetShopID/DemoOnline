@@ -529,84 +529,17 @@ function minimizeCart() {
  * CHECKOUT FUNCTION
  ******************************/
 async function checkout() {
-  const items = Object.values(cart);
-  if (items.length === 0) {
-    alert('Keranjang kosong!');
-    return;
-  }
+    const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbziolCAQ5VTppxXtzRA5BpuGg4v3QfVUC5pdIIO9gju6Pv1_0Sm1tKY0Ac8hiwOsnHJWA/exec";
 
-  const profile = getCurrentProfile();
-  const waNumber = profile ? profile.wa : '';
-  if (!waNumber) {
-    alert('Nomor WhatsApp belum diatur di profil.');
-    return;
-  }
-
-  const total = items.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const msgLines = items.map(i => `- ${i.name} (${i.qty}x ${formatRp(i.price)})`);
-  const msg = [
-    "Halo, saya mau titip:",
-    ...msgLines,
-    "",
-    `Total: ${formatRp(total)}`,
-    "",
-    "_Silakan konfirmasi pembayaran setelah pesan dikirim._"
-  ].join("\n");
-
-  // ✅ Kirim pesan ke WhatsApp
-  window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
-
-  // ✅ Siapkan data order untuk disimpan ke Google Sheet
-  const orderData = {
-    items,
-    total,
-    profileName: profile.name,
-    profileWA: profile.wa
-  };
-
-  // ⚙️ URL Web App Google Apps Script
-  const ORDER_API_URL = "https://script.google.com/macros/library/d/13WAtkdCLHNqN6B1C9DqFYIk4Yi4zTTo2H0fl6Y7AP9RsGM9U6PKiZWHL/6";
-  
-
-  try {
     const res = await fetch(ORDER_API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(orderData)
     });
+    
+    const json = await res.json();
+    console.log("Response:", json);
 
-    const text = await res.text();
-    console.log("Response Google Sheet:", text);
-
-    if (!res.ok) throw new Error("Response error: " + res.status);
-
-    // ✅ Bersihkan cart setelah sukses
-    cart = {};
-    localStorage.removeItem("jastip_cart");
-    updateCartCount();
-    renderCart();
-    document.getElementById('cartdrawer').classList.remove('active');
-
-    // ✅ Notifikasi sukses
-    const toast = document.createElement("div");
-    toast.textContent = "✅ Pesanan berhasil dikirim dan disimpan!";
-    toast.style.position = "fixed";
-    toast.style.bottom = "80px";
-    toast.style.right = "20px";
-    toast.style.background = "var(--accent)";
-    toast.style.color = "#fff";
-    toast.style.padding = "10px 16px";
-    toast.style.borderRadius = "8px";
-    toast.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
-    toast.style.fontSize = "14px";
-    toast.style.zIndex = "9999";
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
-
-  } catch (err) {
-    console.error("❌ Gagal kirim ke Google Sheet:", err);
-    alert("⚠️ Pesanan berhasil dikirim ke WhatsApp,\nnamun gagal disimpan ke Google Sheet.\nPeriksa izin Web App kamu atau koneksi internet.");
-  }
 }
 
 /******************************
