@@ -529,18 +529,40 @@ function minimizeCart() {
  * CHECKOUT FUNCTION
  ******************************/
 async function checkout() {
-    const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbziolCAQ5VTppxXtzRA5BpuGg4v3QfVUC5pdIIO9gju6Pv1_0Sm1tKY0Ac8hiwOsnHJWA/exec";
+  // Data yang dikirim ke Apps Script
+  const orderData = {
+    items: [
+      { name: "Produk Contoh", qty: 2, price: 15000 },
+      { name: "Produk Lain", qty: 1, price: 10000 }
+    ],
+    total: 40000,
+    profileName: "Toko Contoh",
+    profileWA: "6289668081647"
+  };
 
+  const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbziolCAQ5VTppxXtzRA5BpuGg4v3QfVUC5pdIIO9gju6Pv1_0Sm1tKY0Ac8hiwOsnHJWA/exec";
+
+  try {
     const res = await fetch(ORDER_API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(orderData)
     });
-    
+
     const json = await res.json();
     console.log("Response:", json);
 
+    if (json.status === "OK") {
+      alert("✅ Pesanan berhasil dikirim ke Google Sheet!");
+    } else {
+      alert("⚠️ Gagal menyimpan pesanan: " + json.message);
+    }
+  } catch (err) {
+    console.error("Fetch error:", err);
+    alert("❌ Gagal mengirim data ke Google Apps Script. Cek koneksi atau izin Web App kamu.");
+  }
 }
+
 
 /******************************
  * INIT ON LOAD
