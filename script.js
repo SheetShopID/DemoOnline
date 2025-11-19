@@ -529,14 +529,13 @@ function minimizeCart() {
  * CHECKOUT FUNCTION
  ******************************/
 async function checkout() {
-  // Data yang dikirim ke Apps Script
   const orderData = {
     items: [
-      { name: "Produk Contoh", qty: 2, price: 15000 },
-      { name: "Produk Lain", qty: 1, price: 10000 }
+      { name: "Produk A", qty: 1, price: 10000 },
+      { name: "Produk B", qty: 2, price: 15000 }
     ],
     total: 40000,
-    profileName: "Toko Contoh",
+    profileName: "Demo Toko",
     profileWA: "6289668081647"
   };
 
@@ -559,9 +558,10 @@ async function checkout() {
     }
   } catch (err) {
     console.error("Fetch error:", err);
-    alert("❌ Gagal mengirim data ke Google Apps Script. Cek koneksi atau izin Web App kamu.");
+    alert("❌ Gagal mengirim data ke Google Apps Script. Cek izin Web App kamu.");
   }
 }
+
 
 
 /******************************
