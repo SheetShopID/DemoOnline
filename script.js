@@ -600,8 +600,8 @@ async function checkout() {
   };
 
   // Ganti dengan URL Web App kamu
-  const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbzqs8y4b5AE3DVfMMMCO7MnOLh0xf543D7KKNQuEjjerVTBErk8E1k1VlfS62EBTaue/exec";
-
+  //const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbzqs8y4b5AE3DVfMMMCO7MnOLh0xf543D7KKNQuEjjerVTBErk8E1k1VlfS62EBTaue/exec";
+  const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbwmf_4LVVdMtNkyt9sg32jFe7zYLX8ihV9dPYZktjaBKw5oY9j9dJWWysZ4Z-w13Sy9bw/exec";
   // Encode ke URL parameter (GET)
   const url = ORDER_API_URL + "?data=" + encodeURIComponent(JSON.stringify(orderData));
 
