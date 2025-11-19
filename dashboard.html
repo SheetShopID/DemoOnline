@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard Online Shop</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #f7f9fb; margin: 0; padding: 20px; }
+  .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap: 16px; }
+  h1 { margin-bottom: 10px; }
+  h3 { margin-top: 0; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 8px; border-bottom: 1px solid #eee; }
+</style>
+</head>
+<body>
+
+<h1>📊 Dashboard Onlineshop</h1>
+<div class="grid">
+  <div class="card"><h3>Total Revenue</h3><div id="rev">Rp0</div></div>
+  <div class="card"><h3>Total Orders</h3><div id="orders">0</div></div>
+  <div class="card"><h3>Units Sold</h3><div id="sold">0</div></div>
+</div>
+
+<div class="card">
+  <h3>Top Products</h3>
+  <table id="topTable"><thead><tr><th>Produk</th><th>Terjual</th></tr></thead><tbody></tbody></table>
+</div>
+
+<div class="card">
+  <h3>Stock Alerts (Stok < 10)</h3>
+  <table id="stockTable"><thead><tr><th>Produk</th><th>Stock</th></tr></thead><tbody></tbody></table>
+</div>
+
+<script>
+const DASHBOARD_API = "https://script.google.com/macros/s/AKfycbxPTwPP744NJnBPeP2AoyyKdSyqio3DiDUdggmQ2ortmZUSSG_CkEXE0-eqLNX-kxOr3g/exec?dashboard=true";
+
+function formatRp(v){return "Rp" + (v||0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+
+async function loadDashboard(){
+  const res = await fetch(DASHBOARD_API);
+  const json = await res.json();
+  if(json.status !== "OK") return alert("Gagal load: " + json.message);
+  const d = json.data;
+
+  document.getElementById("rev").textContent = formatRp(d.totalRevenue);
+  document.getElementById("orders").textContent = d.totalOrders;
+  document.getElementById("sold").textContent = d.unitsSold;
+
+  // top products
+  const topBody = document.querySelector("#topTable tbody");
+  topBody.innerHTML = "";
+  d.topProducts.forEach(p=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${p.name}</td><td>${p.qty}</td>`;
+    topBody.appendChild(tr);
+  });
+
+  // stock alerts
+  const stockBody = document.querySelector("#stockTable tbody");
+  stockBody.innerHTML = "";
+  d.stockAlerts.forEach(p=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${p.name}</td><td>${p.stock}</td>`;
+    stockBody.appendChild(tr);
+  });
+}
+
+loadDashboard();
+</script>
+
+</body>
+</html>
