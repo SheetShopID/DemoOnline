@@ -565,7 +565,7 @@ async function checkout() {
   };
 
   // ⚙️ URL Web App Google Apps Script
-  const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbxD-y9sOmcsCO8ctRJB4x2X4WPSrTF5ibNfmHKGg1k9zNdwvV22YBuSmfxrV2CQW_J1Dw/exec";
+  const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbw5yEEuGbcoswffIQ7U1ABixiU4RpHikJtUaVwgAy6h3GEm08418WOILKiHnppr57dpfA/exec";
 
   try {
     const res = await fetch(ORDER_API_URL, {
