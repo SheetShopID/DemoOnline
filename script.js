@@ -531,22 +531,26 @@ function minimizeCart() {
 async function checkout() {
   const orderData = {
     items: [
-      { name: "Produk A", qty: 1, price: 10000 },
-      { name: "Produk B", qty: 2, price: 15000 }
+      { name: "Scarlett Whitening Body Serum", qty: 1, price: 65000 },
+      { name: "Kopi Kenangan 250ml", qty: 2, price: 17500 }
     ],
-    total: 40000,
+    total: 100000,
     profileName: "Demo Toko",
     profileWA: "6289668081647"
   };
 
-  const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbziolCAQ5VTppxXtzRA5BpuGg4v3QfVUC5pdIIO9gju6Pv1_0Sm1tKY0Ac8hiwOsnHJWA/exec";
+  // 🔗 Ganti dengan URL Web App milikmu (yang berakhiran /exec)
+  const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbz4Axgu3ZSjyXEWhN3PY_pVAVfQWP97ZBsjG1Eg1sg827MFy14urYY_FqX8DP7TFMgL/exec";
 
   try {
     const res = await fetch(ORDER_API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(orderData)
+      body: JSON.stringify(orderData),
     });
+
+    // ✅ Jika Web App sudah mengirim header CORS, ini akan sukses
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const json = await res.json();
     console.log("Response:", json);
@@ -556,13 +560,13 @@ async function checkout() {
     } else {
       alert("⚠️ Gagal menyimpan pesanan: " + json.message);
     }
+
   } catch (err) {
-    console.error("Fetch error:", err);
-    alert("❌ Gagal mengirim data ke Google Apps Script. Cek izin Web App kamu.");
+    console.error("❌ Fetch error:", err);
+    alert("❌ Gagal mengirim data ke Google Apps Script.\n" +
+          "Pastikan Web App kamu sudah di-deploy 'Anyone' dan menggunakan kode dengan header CORS.");
   }
 }
-
-
 
 /******************************
  * INIT ON LOAD
