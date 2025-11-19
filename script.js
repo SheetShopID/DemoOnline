@@ -528,11 +528,10 @@ function minimizeCart() {
 /******************************
  * CHECKOUT FUNCTION
  ******************************/
-
 async function checkout() {
   const orderData = {
     items: [
-      { name: "Scarlett Body Serum", qty: 1, price: 65000 },
+      { name: "Scarlett Whitening", qty: 1, price: 65000 },
       { name: "Kopi Kenangan", qty: 2, price: 17500 }
     ],
     total: 100000,
@@ -540,33 +539,28 @@ async function checkout() {
     profileWA: "6289668081647"
   };
 
-  // URL Web App kamu
-  const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbyyAv7Zau74y_LxdO6ZlscwFy0KtNxKXBA0bbH4AnAZlADAY0aImvngvgmWAsGkBJ5J/exec";
+  // Ganti dengan URL Web App milikmu
+  const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbziolCAQ5VTppxXtzRA5BpuGg4v3QfVUC5pdIIO9gju6Pv1_0Sm1tKY0Ac8hiwOsnHJWA/exec";
 
-  // Proxy aman untuk bypass CORS
-  const proxy = "https://api.allorigins.win/raw?url=" + encodeURIComponent(ORDER_API_URL);
+  // Encode data jadi URL parameter
+  const url = ORDER_API_URL + "?data=" + encodeURIComponent(JSON.stringify(orderData));
 
   try {
-    const res = await fetch(proxy, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(orderData)
-    });
-
+    const res = await fetch(url);
     const json = await res.json();
     console.log("Response:", json);
 
     if (json.status === "OK") {
-      alert("✅ Pesanan berhasil dikirim ke Google Sheet!");
+      alert("✅ Pesanan berhasil disimpan ke Google Sheet!");
     } else {
       alert("⚠️ Gagal menyimpan pesanan: " + json.message);
     }
-
   } catch (err) {
     console.error("❌ Fetch error:", err);
-    alert("❌ Gagal mengirim data ke Google Apps Script. Coba periksa koneksi atau izin Web App kamu.");
+    alert("❌ Gagal mengirim data ke Google Apps Script.");
   }
 }
+
 
 /******************************
  * INIT ON LOAD
