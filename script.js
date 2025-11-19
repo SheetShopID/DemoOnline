@@ -638,7 +638,7 @@ async function checkout() {
   window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
 
   const orderData = { items, total, profileName: profile.name, profileWA: profile.wa };
-  const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbzlk7s5K_PLw-LS7rjBr7UBBOTXLF7dpLbmIHO83D4EmBhpkQeyEzjXy9ufOGIyrpX1Ug/exec";
+  const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbxPTwPP744NJnBPeP2AoyyKdSyqio3DiDUdggmQ2ortmZUSSG_CkEXE0-eqLNX-kxOr3g/exec";
   const url = ORDER_API_URL + "?data=" + encodeURIComponent(JSON.stringify(orderData));
 
   try {
