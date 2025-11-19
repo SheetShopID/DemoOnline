@@ -426,8 +426,8 @@ function loadProducts() {
       PRODUCTS = rows.map(r => {
         // Simple CSV parsing (assuming no commas in fields)
         const parts = r.split(",");
-        const [name, shop, price, img, fee, category, promo] = parts;
-        return {
+       const [name,shop,price,img,fee,category,promo,stock] = parts;
+        return { 
           id: Math.random(),
           name: name ? name.trim() : '',
           shop: shop ? shop.trim() : '',
@@ -435,8 +435,10 @@ function loadProducts() {
           img: img ? img.trim() : '',
           fee: +(fee || 0),
           category: category ? category.trim() : '',
-          promo: (promo || '').trim().toLowerCase()
+          promo: (promo || '').trim().toLowerCase(),
+          stock: isNaN(stock) ? 0 : +stock
         };
+
       }).filter(p => p.name);
 
       populateCategories();
@@ -489,6 +491,7 @@ function renderProducts() {
         <div class="pname">${escapeHtml(p.name)}</div>
         <div class="shop">${escapeHtml(p.shop)}</div>
         <div class="price">${formatRp(p.price)} + Fee ${formatRp(p.fee)}</div>
+        <div class="stock">Stok: ${p.stock}</div>
         <button class="btn add" onclick="addToCart('${escapeJs(p.name)}', ${p.price + p.fee})">+ Titip</button>
         <button class="btn quick" onclick="addToCart('${escapeJs(p.name)}', ${p.price + p.fee}, true)">Beli Cepat</button>
       `;
@@ -536,18 +539,30 @@ function checkout() {
     return;
   }
 
-  let msg = 'Halo, saya mau titip:\n';
-  let total = 0;
+  const total = items.reduce((a,b)=>a+b.price*b.qty,0);
+  const msgLines = items.map(i => `- ${i.name} (${i.qty}x ${formatRp(i.price)})`);
+  let msg = "Halo, saya mau titip:\n" + msgLines.join('\n') + `\n\nTotal: ${formatRp(total)}`;
 
-  items.forEach(i => {
-    const subtotal = i.price * i.qty;
-    total += subtotal;
-    msg += `- ${i.name} (${i.qty}x ${formatRp(i.price)})\n`;
-  });
-
-  msg += `\nTotal: ${formatRp(total)}\n`;
-
+  // ✅ Kirim ke WhatsApp
   window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+
+  // ✅ Simpan ke Google Sheet Order (via Web App)
+  const orderData = {
+    items,
+    total,
+    profileName: profile.name,
+    profileWA: profile.wa
+  };
+
+  // Ganti URL ini dengan Web App kamu
+  const ORDER_SHEET_URL = "https://script.google.com/macros/s/AKfycbxD-y9sOmcsCO8ctRJB4x2X4WPSrTF5ibNfmHKGg1k9zNdwvV22YBuSmfxrV2CQW_J1Dw/exec";
+
+  fetch(ORDER_SHEET_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(orderData)
+  }).then(res => console.log("Order recorded:", res.status))
+    .catch(err => console.error("Error saving order:", err));
 }
 
 /******************************
