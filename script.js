@@ -567,16 +567,11 @@ async function checkout() {
   // ⚙️ Ganti dengan URL Web App milikmu
   const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbxD-y9sOmcsCO8ctRJB4x2X4WPSrTF5ibNfmHKGg1k9zNdwvV22YBuSmfxrV2CQW_J1Dw/exec";
 
-  // 🔧 Gunakan proxy agar lolos CORS (aman untuk github.io / localhost)
-  const proxy = "https://corsproxy.io/?";
-
-  try {
-    const res = await fetch(proxy + encodeURIComponent(ORDER_API_URL), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(orderData)
-    });
-
+  const res = await fetch(ORDER_API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(orderData)
+  });
     const text = await res.text();
     console.log("Response Google Sheet:", text);
 
