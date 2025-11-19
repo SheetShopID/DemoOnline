@@ -528,29 +528,30 @@ function minimizeCart() {
 /******************************
  * CHECKOUT FUNCTION
  ******************************/
+
 async function checkout() {
   const orderData = {
     items: [
-      { name: "Scarlett Whitening Body Serum", qty: 1, price: 65000 },
-      { name: "Kopi Kenangan 250ml", qty: 2, price: 17500 }
+      { name: "Scarlett Body Serum", qty: 1, price: 65000 },
+      { name: "Kopi Kenangan", qty: 2, price: 17500 }
     ],
     total: 100000,
     profileName: "Demo Toko",
     profileWA: "6289668081647"
   };
 
-  // 🔗 Ganti dengan URL Web App milikmu (yang berakhiran /exec)
-  const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbz4Axgu3ZSjyXEWhN3PY_pVAVfQWP97ZBsjG1Eg1sg827MFy14urYY_FqX8DP7TFMgL/exec";
+  // URL Web App kamu
+  const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbyyAv7Zau74y_LxdO6ZlscwFy0KtNxKXBA0bbH4AnAZlADAY0aImvngvgmWAsGkBJ5J/exec";
+
+  // Proxy aman untuk bypass CORS
+  const proxy = "https://api.allorigins.win/raw?url=" + encodeURIComponent(ORDER_API_URL);
 
   try {
-    const res = await fetch(ORDER_API_URL, {
+    const res = await fetch(proxy, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(orderData),
+      body: JSON.stringify(orderData)
     });
-
-    // ✅ Jika Web App sudah mengirim header CORS, ini akan sukses
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const json = await res.json();
     console.log("Response:", json);
@@ -563,8 +564,7 @@ async function checkout() {
 
   } catch (err) {
     console.error("❌ Fetch error:", err);
-    alert("❌ Gagal mengirim data ke Google Apps Script.\n" +
-          "Pastikan Web App kamu sudah di-deploy 'Anyone' dan menggunakan kode dengan header CORS.");
+    alert("❌ Gagal mengirim data ke Google Apps Script. Coba periksa koneksi atau izin Web App kamu.");
   }
 }
 
